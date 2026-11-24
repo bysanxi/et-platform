@@ -9,6 +9,8 @@ mvn -DskipTests package
 docker compose -f docs/deployment/docker/docker-compose.yml up -d
 ```
 
+IAM 和 Gateway 默认使用 ID 为 `et-platform` 的 Nacos 命名空间读取配置和注册服务。首次使用时，在 Nacos 控制台创建该命名空间，并将 [Nacos 配置包](nacos/et-platform.zip) 导入其中。使用其他命名空间时，将两个服务的 `NACOS_NAMESPACE` 设为对应的命名空间 ID。
+
 在仓库根目录打开两个终端，分别启动 IAM 和 Gateway。
 
 ```shell
@@ -21,4 +23,4 @@ java -jar et-platform-gateway/target/et-platform-gateway.jar
 
 Gateway 默认监听 `15000`，将 `/iam/**` 转发到 IAM。IAM 默认监听 `15002`。开发环境预置平台租户 `0000` 和内部团队租户 `8888`。两者的演示账号均为 `admin`，初始密码为 `123456`。部署到实际团队环境时应更换演示凭据。
 
-服务包含本地开发配置。使用配置中心时，可将 [Nacos 配置包](nacos/et-platform.zip) 导入两个服务共用的 Nacos 命名空间。支持通过环境变量设置 `NACOS_ADDR`、`NACOS_NAMESPACE`、`ET_DB_URL`、`ET_DB_USER`、`ET_DB_PASSWORD`、`ET_REDIS_HOST`、`ET_REDIS_PORT` 以及 `SPRING_DATA_REDIS_PASSWORD`。
+服务包含本地开发配置。支持通过环境变量设置 `NACOS_ADDR`、`ET_DB_URL`、`ET_DB_USER`、`ET_DB_PASSWORD`、`ET_REDIS_HOST`、`ET_REDIS_PORT` 以及 `SPRING_DATA_REDIS_PASSWORD`。
