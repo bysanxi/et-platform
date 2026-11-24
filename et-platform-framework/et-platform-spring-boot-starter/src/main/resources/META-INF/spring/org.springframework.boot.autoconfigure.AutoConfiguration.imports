@@ -1,0 +1,10 @@
+cool.et.framework.boot.base.GlobalExceptionHandler
+cool.et.framework.boot.base.configuration.DefaultWebMvcConfiguration
+cool.et.framework.boot.log.configuration.AccessLogAutoConfiguration
+cool.et.framework.boot.remote.configuration.RemoteAutoConfiguration
+cool.et.framework.boot.response.GlobalResponseBodyAdvice
+cool.et.framework.boot.security.AuthenticationContextConfiguration
+cool.et.framework.boot.async.AsyncConfiguration
+com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DynamicDataSourceAutoConfiguration
+cool.et.framework.boot.response.GlobalJsonDeserializer
+cool.et.framework.boot.remote.configuration.RemoteAloneRedisAutoConfiguration

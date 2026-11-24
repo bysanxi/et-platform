@@ -1,0 +1,66 @@
+server:
+  shutdown: graceful # 开启优雅停机
+spring:
+  threads:
+    virtual:
+      enabled: true # 开启全局虚拟线程
+  reactor:
+    context-propagation: auto
+  lifecycle:
+    timeout-per-shutdown-phase: 30s # 给足时间处理旧请求
+  cloud:
+    openfeign:
+      httpclient:
+        hc5:
+          enabled: true
+      client:
+        config:
+          default: # 全局配置
+            # 在 K8s 内部，超过 1秒连不上通常就是 IP 死了
+            connect-timeout: 1000
+            # 读取超时：接口处理时间
+            read-timeout: 60000
+    loadbalancer:
+      nacos:
+        enabled: true    
+      retry:
+        enabled: true # 开启重试
+        # 重试策略配置（部分版本需要通过 Bean 配置，以下是常见配置）
+        max-retries-on-same-service-instance: 0 # 不在同一个坏 IP 上死磕
+        max-retries-on-next-service-instance: 2 # 尝试切换到下一个实例重试 2 次
+        retryable-status-codes: 503, 500 # 针对哪些状态码重试（可选）
+
+management:
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+    propagation:
+      type: w3c, b3
+    baggage:
+      remote-fields: x-request-id
+      correlation:
+        fields: x-request-id
+  endpoints:
+    web:
+      exposure:
+        # 【安全配置】只保留 health 和 info
+        include: "health,info,prometheus" 
+
+forest:
+  backend: okhttp3             # 后端HTTP框架（默认为 okhttp3）
+  max-connections: 1000        # 连接池最大连接数（默认为 500）
+  max-route-connections: 500   # 每个路由的最大连接数（默认为 500）
+  max-request-queue-size: 100  # [自v1.5.22版本起可用] 最大请求等待队列大小
+  max-async-thread-size: 300   # [自v1.5.21版本起可用] 最大异步线程数
+  max-async-queue-size: 16     # [自v1.5.22版本起可用] 最大异步线程池队列大小
+  timeout: 3000                # [已不推荐使用] 请求超时时间，单位为毫秒（默认为 3000）
+  connect-timeout: 3000        # 连接超时时间，单位为毫秒（默认为 timeout）
+  read-timeout: 3000           # 数据读取超时时间，单位为毫秒（默认为 timeout）
+  max-retry-count: 0           # 请求失败后重试次数（默认为 0 次不重试）
+  ssl-protocol: TLS            # 单向验证的HTTPS的默认TLS协议（默认为 TLS）
+  log-enabled: true            # 打开或关闭日志（默认为 true）
+  log-request: true            # 打开/关闭Forest请求日志（默认为 true）
+  log-response-status: true    # 打开/关闭Forest响应状态日志（默认为 true）
+  log-response-content: true   # 打开/关闭Forest响应内容日志（默认为 false）
+  async-mode: platform         # [自v1.5.27版本起可用] 异步模式（默认为 platform）

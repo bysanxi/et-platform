@@ -1,0 +1,5 @@
+cool.et.framework.security.configuration.OAuth2AutoConfiguration
+cool.et.framework.security.configuration.OAuth2ExceptionHandler
+cool.et.framework.security.configuration.StpInterfaceRedisImpl
+cool.et.framework.security.configuration.feign.AutoSaSameConfiguration
+

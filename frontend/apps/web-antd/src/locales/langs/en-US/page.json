@@ -1,0 +1,12 @@
+{
+  "auth": {
+    "login": "Login",
+    "profile": "Profile",
+    "tenantCode": "Tenant code",
+    "tenantCodeRequired": "Enter your tenant code"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "workspace": "Workspace"
+  }
+}

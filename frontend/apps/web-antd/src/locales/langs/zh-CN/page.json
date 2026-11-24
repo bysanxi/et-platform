@@ -1,0 +1,12 @@
+{
+  "auth": {
+    "login": "登录",
+    "profile": "个人中心",
+    "tenantCode": "租户编码",
+    "tenantCodeRequired": "请输入租户编码"
+  },
+  "dashboard": {
+    "title": "概览",
+    "workspace": "工作台"
+  }
+}

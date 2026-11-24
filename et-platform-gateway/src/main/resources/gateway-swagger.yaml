@@ -1,0 +1,10 @@
+knife4j:
+  gateway:
+    enabled: true
+    strategy: manual
+    routes:
+      - name: IAM Server
+        url: /iam/v3/api-docs?group=default
+        context-path: /iam
+        service-name: et-platform-iam
+        order: 2

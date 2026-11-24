@@ -1,0 +1,15 @@
+mybatis-plus:
+  mapper-locations:
+    - classpath:cool/et/**/repository/**/*.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  type-aliases-package: cool.et.**.entity,cool.et.**.handler.type
+  type-handlers-package: cool.et.**.handler.type
+  global-config:
+    db-config:
+      id-type: auto
+      insert-strategy: NOT_NULL
+      update-strategy: NOT_NULL
+      where-strategy: not_empty
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false

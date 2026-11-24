@@ -1,0 +1,35 @@
+server:
+  port: 15002
+extend:
+  boot:
+    remote:
+      enabled: false
+spring:
+  messages:
+    basename: i18n/messages,default-i18n/messages
+  application:
+    name: et-platform-iam
+  config:
+    import:
+      - classpath:cloud-default.yaml
+      - classpath:redis.properties
+      - classpath:security.yaml
+      - classpath:mybatis-plus-default.yaml
+      - classpath:et-platform-iam.properties
+      - optional:nacos:security.yaml
+      - optional:nacos:cloud-default.yaml
+      - optional:nacos:${spring.application.name}.properties
+      - optional:nacos:redis.properties
+      - optional:nacos:mybatis-plus-default.yaml
+  cloud:
+    nacos:
+      server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+      discovery:
+        server-addr: ${spring.cloud.nacos.server-addr}
+        namespace: ${NACOS_NAMESPACE:}
+      config:
+        server-addr: ${spring.cloud.nacos.server-addr}
+        namespace: ${NACOS_NAMESPACE:}
+  data:
+    redis:
+      client-name:

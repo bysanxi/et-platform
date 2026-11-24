@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cool.et.platform.iam.system.repository.UserMapper">
+
+    <select id="findPage" resultType="cool.et.platform.iam.system.domain.dto.resp.UserPageResp">
+        SELECT *
+        FROM t_user ${ew.customSqlSegment}
+    </select>
+
+    <select id="list" resultType="cool.et.platform.iam.system.domain.entity.User">
+        SELECT *
+        FROM t_user
+    </select>
+
+
+    <select id="selectResByUserId" resultType="java.lang.Long">
+        SELECT DISTINCT rr.res_id
+        FROM sys_role_res rr
+        JOIN sys_user_role ur ON ur.role_id = rr.role_id AND ur.deleted = FALSE
+        JOIN sys_role r ON r.id = ur.role_id AND r.status = TRUE
+        JOIN t_user u ON u.id = ur.user_id AND u.tenant_id = r.tenant_id
+        WHERE ur.user_id = #{userId} AND rr.deleted = FALSE AND u.deleted = FALSE
+    </select>
+
+</mapper>
