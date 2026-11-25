@@ -34,7 +34,7 @@ HELP.md
 /.nb-gradle/
 /build/
 
-/logs
+logs/
 *.log
 rebel.xml
 /bak/**

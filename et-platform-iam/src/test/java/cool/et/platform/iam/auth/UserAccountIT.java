@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.net.URI;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserAccountIT {
     @Autowired UserAccountFeign accounts;
     @Autowired JdbcTemplate db;
+    @Autowired StringRedisTemplate redis;
 
     @Test
     void emailOnlySignupAndLookupDistinguishAbsenceFromFailure() throws Exception {
@@ -58,6 +60,8 @@ class UserAccountIT {
         String digest = db.queryForObject(selectPassword, String.class, id);
         assertTrue(PasswordEncoderHelper.matches(initial, digest));
         var session = accounts.mobileLogin(new MobileLogin("8888", mobile));
+        assertTrue(redis.hasKey("Authorization:login:token:" + session.getAccessToken()));
+        assertTrue(redis.hasKey("Authorization:var:same-token"));
         assertEquals("mobile", session.getClientId());
         assertEquals(digest, db.queryForObject(selectPassword, String.class, id));
         assertTrue(session.getExpiresIn() > 0);

@@ -5,6 +5,7 @@ import cool.et.framework.coordination.leadership.redis.RedisLeaderSelector;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,7 +27,7 @@ public class LeadershipAutoConfiguration {
     }
 
     @Bean
-    ElectionClient electionClient(LeadershipProperties properties) {
+    ElectionClient electionClient(LeadershipProperties properties, @Value("${spring.data.redis.database:0}") int database) {
         Assert.notEmpty(properties.getServers(), "extend.coordination.redis.servers is required");
         long ttl = properties.getLeadershipTtlInMilliseconds();
         Assert.isTrue(ttl >= 300, "leadership TTL must be at least 300 ms for watchdog renewal");
@@ -37,12 +38,15 @@ public class LeadershipAutoConfiguration {
         String password = StringUtils.hasText(properties.getPassword()) ? properties.getPassword() : null;
         config.setPassword(password);
         switch (properties.getMode()) {
-            case "single" -> config.useSingleServer().setAddress(addresses[0]);
-            case "cluster" -> config.useClusterServers().addNodeAddress(addresses);
+            case "single" -> config.useSingleServer().setAddress(addresses[0]).setDatabase(database);
+            case "cluster" -> {
+                Assert.isTrue(database == 0, "Redis Cluster requires database 0");
+                config.useClusterServers().addNodeAddress(addresses);
+            }
             case "sentinel" -> {
                 Assert.hasText(properties.getMaster(), "extend.coordination.redis.master is required in sentinel mode");
                 config.useSentinelServers().setMasterName(properties.getMaster()).addSentinelAddress(addresses)
-                        .setSentinelPassword(password);
+                        .setSentinelPassword(password).setDatabase(database);
             }
             default -> throw new IllegalArgumentException("Unsupported Redis mode: " + properties.getMode());
         }
