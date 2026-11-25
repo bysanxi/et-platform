@@ -3,6 +3,7 @@ package cool.et.framework.security.configuration;
 import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.context.SaTokenContext;
 import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.SameTokenInvalidException;
 import cn.dev33.satoken.exception.SaTokenException;
 import cool.et.framework.commons.entity.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +32,8 @@ public class OAuth2ExceptionHandler {
         SaTokenContext context = SaHolder.getContext();
         if (context != null && context.isValid()) {
             log.error("sa-token => http request uri => {},message => {}", context.getRequest().getUrl(), e.getLocalizedMessage());
-            return ResponseEntity.ok(Result.fail(HttpStatus.FORBIDDEN.value(), e.getMessage()));
         }
-        return ResponseEntity.ok(Result.fail(HttpStatus.FORBIDDEN.value(), e.getMessage()));
+        String message = e instanceof SameTokenInvalidException ? "无效的 Same-Token" : e.getMessage();
+        return ResponseEntity.ok(Result.fail(HttpStatus.FORBIDDEN.value(), message));
     }
 }

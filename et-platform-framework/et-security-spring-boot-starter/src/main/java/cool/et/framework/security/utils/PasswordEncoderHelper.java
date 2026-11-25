@@ -29,6 +29,9 @@ public final class PasswordEncoderHelper {
     }
     
     public static boolean matches(String rawPassword, String encodedPassword) {
+        if (StrUtil.isBlank(rawPassword) || StrUtil.isBlank(encodedPassword)) {
+            return false;
+        }
         String encodingId = StrUtil.subBetween(encodedPassword, DEFAULT_ID_PREFIX, DEFAULT_ID_SUFFIX);
         String actualPassword = StrUtil.removePrefix(encodedPassword, DEFAULT_ID_PREFIX + encodingId + DEFAULT_ID_SUFFIX);
         if (encodingId == null) {

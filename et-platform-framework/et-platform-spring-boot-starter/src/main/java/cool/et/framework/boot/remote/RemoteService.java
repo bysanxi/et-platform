@@ -188,10 +188,14 @@ public class RemoteService {
                         .findFirst()
                         .orElse(null); // 返回null，如果没有找到匹配的元素
             }
+            if (loadService == null && type.getBeanClass().isInterface()) {
+                // 客户端可以把回显委托给按其业务接口名称注册的独立加载器。
+                loadService = Arrays.stream(type.getBeanClass().getInterfaces())
+                        .map(contract -> strategyMap.get(contract.getName()))
+                        .filter(Objects::nonNull).findFirst().orElse(null);
+            }
             if (loadService == null) {
-                log.warn("处理字段的回显数据时，没有找到 @Remote 中的api：[{}]实例。" +
-                        "请确保你自定义的接口实现了 LoadService 中的 findByIds 方法。" +
-                        "若api指定的是ServiceImpl，请确保在同一个服务内。", type);
+                log.warn("未找到用于 @Remote({}) 的 LoadService，请检查回显 Bean 的注册。", type.getBeanClass().getName());
                 continue;
             }
             CacheLoadKeys lk = new CacheLoadKeys(type, loadService, keys);

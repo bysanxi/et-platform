@@ -1,17 +1,15 @@
 package cool.et.platform.iam.auth.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.dev33.satoken.config.SaTokenConfig;
-import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cool.et.framework.commons.exception.CheckedException;
 import cool.et.framework.commons.security.AuthenticationContext;
 import cool.et.framework.security.domain.UserInfoDetails;
 import cool.et.platform.iam.auth.domain.dto.req.LoginReq;
-import cool.et.platform.iam.auth.domain.dto.resp.LoginResp;
 import cool.et.platform.iam.auth.service.PasswordLoginService;
 import cool.et.platform.iam.base.domain.dto.req.ChangePasswordReq;
 import cool.et.platform.iam.base.domain.dto.req.ChangeUserInfoReq;
+import cool.et.platform.iam.contract.account.LoginResp;
 import cool.et.platform.iam.system.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,7 +26,6 @@ import java.util.List;
 @Tag(name = "Token管理", description = "Token管理")
 public class TokenController {
 
-    private final SaTokenConfig tokenConfig;
     private final AuthenticationContext context;
     private final UserService userService;
     private final PasswordLoginService passwordLoginService;
@@ -37,13 +34,7 @@ public class TokenController {
     @PostMapping("/login")
     @Operation(summary = "用户登录", description = "用户登录")
     public LoginResp login(@Validated @RequestBody LoginReq req) {
-        passwordLoginService.login(req);
-        SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
-        return LoginResp.builder()
-                .accessToken(tokenInfo.getTokenValue())
-                .expiresIn(tokenInfo.getTokenTimeout())
-                .clientId(req.getClientId())
-                .tokenType(tokenConfig.getTokenPrefix()).build();
+        return passwordLoginService.login(req);
     }
 
     @GetMapping("/userinfo")

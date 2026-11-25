@@ -5,10 +5,9 @@ import cool.et.framework.db.mybatisplus.ext.SuperService;
 import cool.et.framework.security.domain.UserInfoDetails;
 import cool.et.platform.iam.auth.support.domain.UserTenantAuthentication;
 import cool.et.platform.iam.base.domain.dto.req.ChangeUserInfoReq;
-import cool.et.platform.iam.system.domain.dto.req.UserPageReq;
+import cool.et.platform.iam.contract.user.UserPageReq;
 import cool.et.platform.iam.system.domain.dto.req.UserSaveReq;
 import cool.et.platform.iam.system.domain.dto.req.UserUpdateReq;
-import cool.et.platform.iam.system.domain.dto.resp.UserPageResp;
 import cool.et.platform.iam.system.domain.entity.User;
 
 import java.util.Collection;
@@ -45,7 +44,7 @@ public interface UserService extends SuperService<User> {
      * @param req req
      * @return 查询结果
      */
-    IPage<UserPageResp> pageList(UserPageReq req);
+    IPage<User> pageList(UserPageReq req);
 
     List<User> visibleUsersByIds(Collection<Long> ids);
 

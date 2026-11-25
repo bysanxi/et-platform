@@ -19,11 +19,14 @@
     <modules>
         <!-- 核心模块 -->
         <module>et-framework-core</module>
+        <module>et-domain-foundation</module>
         <module>et-platform-spring-boot-starter</module>
 
         <!-- 数据层 -->
         <module>et-mybatis-plus-spring-boot-starter</module>
         <module>et-redis-spring-boot-starter</module>
+        <module>et-leadership-spring-boot-starter</module>
+        <module>et-id-spring-boot-starter</module>
 
         <!-- 安全认证 -->
         <module>et-security-spring-boot-starter</module>

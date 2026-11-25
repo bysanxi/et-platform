@@ -86,6 +86,15 @@ public interface AuthenticationContext {
      */
     List<String> rolePermissionList();
 
+    /** 当前会话持有平台管理员角色时返回 true。 */
+    default boolean isPlatformAdmin() {
+        if (anonymous()) {
+            return false;
+        }
+        List<String> roles = rolePermissionList();
+        return roles != null && roles.contains("PLATFORM-ADMIN");
+    }
+
     /**
      * 数据权限
      *

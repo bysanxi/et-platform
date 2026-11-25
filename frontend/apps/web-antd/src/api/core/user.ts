@@ -5,8 +5,6 @@ import { defHttp } from '#/api/request';
 export interface UserProfileUpdateParams {
   birthday?: string;
   description?: string;
-  email: string;
-  mobile: string;
   nickname: string;
 }
 

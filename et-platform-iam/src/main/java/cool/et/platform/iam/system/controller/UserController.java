@@ -2,17 +2,17 @@ package cool.et.platform.iam.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.hutool.core.bean.BeanUtil;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import cool.et.framework.commons.BeanUtilPlus;
 import cool.et.framework.commons.MapHelper;
 import cool.et.framework.commons.annotation.log.AccessLog;
+import cool.et.framework.commons.entity.Entity;
 import cool.et.framework.commons.security.DataPermission;
 import cool.et.framework.db.mybatisplus.datascope.service.DataScopeService;
-import cool.et.framework.commons.entity.Entity;
-import cool.et.platform.iam.system.domain.dto.req.UserPageReq;
+import cool.et.platform.iam.contract.user.UserApi;
+import cool.et.platform.iam.contract.user.UserInfoResp;
+import cool.et.platform.iam.contract.user.UserPage;
+import cool.et.platform.iam.contract.user.UserPageReq;
 import cool.et.platform.iam.system.domain.dto.req.UserSaveReq;
 import cool.et.platform.iam.system.domain.dto.req.UserUpdateReq;
-import cool.et.platform.iam.system.domain.dto.resp.UserPageResp;
 import cool.et.platform.iam.system.domain.entity.User;
 import cool.et.platform.iam.system.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,16 +34,19 @@ import java.util.Set;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 @Tag(name = "用户管理", description = "用户管理")
-public class UserController {
+public class UserController implements UserApi {
     
     private final UserService userService;
     private final DataScopeService dataScopeService;
     
+    @Override
     @PostMapping("/page")
     @Operation(summary = "用户列表 - [Levin] - [DONE]")
     @SaCheckPermission(value = {"sys:user:page"})
-    public IPage<UserPageResp> pageList(@RequestBody UserPageReq req) {
-        return this.userService.pageList(req);
+    public UserPage pageList(@RequestBody UserPageReq req) {
+        var page = userService.pageList(req);
+        var records = page.getRecords().stream().map(UserController::toUserInfo).toList();
+        return new UserPage(records, page.getTotal(), page.getSize(), page.getCurrent(), page.getPages());
     }
     
     @AccessLog(module = "用户管理", description = "重置密码", response = false)
@@ -80,22 +83,23 @@ public class UserController {
     
     @PostMapping("/ids")
     @Operation(summary = "ID批量查询")
-    public List<UserPageResp> idList(@RequestBody Set<Long> ids) {
-        return BeanUtilPlus.toBeans(this.userService.visibleUsersByIds(ids), UserPageResp.class);
+    public List<UserInfoResp> idList(@RequestBody Set<Long> ids) {
+        return userService.visibleUsersByIds(ids).stream().map(UserController::toUserInfo).toList();
     }
     
+    @Override
     @PostMapping("/batch_ids")
     @Operation(summary = "ID批量查询")
-    public Map<Long, UserPageResp> batchIds(@RequestBody Set<Long> ids) {
+    public Map<Long, UserInfoResp> findByIds(@RequestBody Set<Long> ids) {
         final List<User> users = this.userService.visibleUsersByIds(ids);
-        return MapHelper.toHashMap(users, Entity::getId, x -> BeanUtil.toBean(x, UserPageResp.class));
+        return MapHelper.toHashMap(users, Entity::getId, UserController::toUserInfo);
     }
 
+    @Override
     @GetMapping("/{id}")
     @Operation(summary = "用户信息查询")
-    public UserPageResp getUser(@PathVariable Long id) {
-        final User user = this.userService.requireVisibleUser(id);
-        return BeanUtil.toBean(user, UserPageResp.class);
+    public UserInfoResp findById(@PathVariable("id") Long id) {
+        return toUserInfo(userService.requireVisibleUser(id));
     }
 
     @GetMapping("/{id}/data_permission")
@@ -104,5 +108,11 @@ public class UserController {
     public DataPermission dataPermission(@PathVariable Long id) {
         User user = userService.requireVisibleUser(id);
         return dataScopeService.getDataScopeById(user.getId(), user.getOrgId());
+    }
+
+    private static UserInfoResp toUserInfo(User user) {
+        UserInfoResp info = BeanUtil.toBean(user, UserInfoResp.class);
+        info.setSex(user.getSex() == null ? null : user.getSex().getValue());
+        return info;
     }
 }

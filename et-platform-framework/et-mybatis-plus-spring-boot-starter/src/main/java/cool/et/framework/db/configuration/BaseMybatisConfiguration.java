@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import cool.et.framework.commons.security.AuthenticationContext;
@@ -96,6 +97,7 @@ public class BaseMybatisConfiguration {
     }
 
     protected void loadInnerInterceptor(MybatisPlusInterceptor interceptor) {
+        interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
         final DatabaseProperties.Intercept intercept = properties.getIntercept();
         if (properties.getDataPermission().isEnabled()) {
             // 分页拦截器之前的插件 => 数据权限插件

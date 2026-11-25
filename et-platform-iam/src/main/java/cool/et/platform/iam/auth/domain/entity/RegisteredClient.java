@@ -17,7 +17,17 @@ import java.time.Instant;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @TableName("sys_registered_client")
-public class RegisteredClient extends SuperEntity<String> {
+public class RegisteredClient extends SuperEntity<Long> {
+
+    private Long userId;
+    private String tenantCode;
+    private Long authzVersion;
+    private String clientAuthenticationMethods;
+
+    public boolean allowsGrant(String grant) {
+        return grantTypes != null && java.util.Arrays.stream(grantTypes.split(","))
+                .map(String::trim).anyMatch(grant::equals);
+    }
     
     @Schema(description = "客户端ID")
     private String clientId;

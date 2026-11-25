@@ -14,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Locale;
 
 @Data
 @SuperBuilder
@@ -48,6 +49,11 @@ public class User extends SuperEntity<Long> {
     
     @Schema(description = "手机号")
     private String mobile;
+
+    public User setEmail(String email) {
+        this.email = email == null || email.isBlank() ? null : email.strip().toLowerCase(Locale.ROOT);
+        return this;
+    }
     
     @Schema(description = "性别")
     private Sex sex;

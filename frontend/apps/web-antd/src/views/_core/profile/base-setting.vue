@@ -41,24 +41,13 @@ const formSchema = computed((): VbenFormSchema[] => {
       fieldName: 'email',
       component: 'Input',
       label: '邮箱',
-      componentProps: {
-        maxlength: 50,
-        placeholder: '请输入邮箱',
-        showCount: true,
-      },
-      rules: z
-        .string()
-        .max(50, '邮箱不能超过50个字符')
-        .email('邮箱格式不正确'),
+      componentProps: { disabled: true },
     },
     {
       fieldName: 'mobile',
       component: 'Input',
       label: '手机号',
-      componentProps: {
-        placeholder: '请输入手机号',
-      },
-      rules: z.string().regex(/^1\d{10}$/, '手机号格式不正确'),
+      componentProps: { disabled: true },
     },
     {
       fieldName: 'description',
@@ -93,8 +82,6 @@ async function handleSubmit(values: Record<string, any>) {
   try {
     await updateUserProfileApi({
       nickname: values.nickname,
-      email: values.email,
-      mobile: values.mobile,
       description: values.description,
     });
     await authStore.fetchUserInfo();

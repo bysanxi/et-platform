@@ -13,9 +13,10 @@ ET Platform is a shared multi-tenant Java backend and administration console for
 ## Modules
 
 - `et-platform-iam` provides authentication, tenant administration, and access management.
+- [`et-platform-iam-common`](et-platform-iam-common/README.md) defines the Java interfaces and data types for IAM user queries, accounts and OAuth client management.
 - `et-platform-gateway` is the shared entry point and forwards `/iam/**` requests to IAM.
 - `et-platform-framework` provides shared core, web, MyBatis-Plus, Redis, security, and Feign components.
-- `et-platform-feign` groups service client contracts and currently contains `et-platform-iam-api`.
+- `et-platform-feign` groups Feign clients and currently contains `et-platform-iam-api`.
 - `et-platform-dependencies` centralizes dependency versions and Maven build configuration.
 - `frontend` contains the Vue 3 administration console for the ET Platform services.
 

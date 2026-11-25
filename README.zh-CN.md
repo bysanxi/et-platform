@@ -13,9 +13,10 @@ ET Platform 是供 ET 内部团队复用的多租户 Java 后端底座，配套�
 ## 模块
 
 - `et-platform-iam` 提供认证、租户管理和权限管理服务。
+- [`et-platform-iam-common`](et-platform-iam-common/README.md) 定义用户查询、账户和 OAuth 客户端管理的 Java 业务接口及数据类型。
 - `et-platform-gateway` 提供统一入口，将 `/iam/**` 请求转发到 IAM。
 - `et-platform-framework` 提供公共核心、Web、MyBatis-Plus、Redis、安全和 Feign 组件。
-- `et-platform-feign` 聚合服务调用契约，目前包含 `et-platform-iam-api`。
+- `et-platform-feign` 聚合 Feign 客户端，目前包含 `et-platform-iam-api`。
 - `et-platform-dependencies` 统一管理依赖版本和 Maven 构建配置。
 - `frontend` 提供 Vue 3 管理台，接入 ET Platform 的服务。
 

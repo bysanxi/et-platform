@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cool.et.platform.iam.system.repository.UserMapper">
 
-    <select id="findPage" resultType="cool.et.platform.iam.system.domain.dto.resp.UserPageResp">
+    <select id="findPage" resultType="cool.et.platform.iam.contract.user.UserInfoResp">
         SELECT *
         FROM t_user ${ew.customSqlSegment}
     </select>

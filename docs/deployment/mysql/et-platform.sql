@@ -94,6 +94,9 @@ INSERT INTO `sys_org` (`id`, `label`, `tenant_id`, `alias`, `tel`, `parent_id`, 
 CREATE TABLE `sys_registered_client` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `client_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `user_id` bigint DEFAULT NULL,
+  `tenant_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `authz_version` bigint NOT NULL DEFAULT 1,
   `client_id_issued_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `client_secret` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `client_secret_expires_at` timestamp NULL DEFAULT NULL,
@@ -113,7 +116,8 @@ CREATE TABLE `sys_registered_client` (
   `last_modify_by` bigint DEFAULT NULL COMMENT '更新人id',
   `last_modify_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '更新人名称',
   `last_modify_time` datetime DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `uk_registered_client_id` (`client_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1865050872845828099 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 INSERT INTO `sys_registered_client` (`id`, `client_id`, `client_id_issued_at`, `client_secret`, `client_secret_expires_at`, `client_name`, `client_authentication_methods`, `grant_types`, `redirect_uris`, `post_logout_redirect_uris`, `scopes`, `client_settings`, `token_settings`, `status`, `deleted`, `create_by`, `create_name`, `create_time`, `last_modify_by`, `last_modify_name`, `last_modify_time`) VALUES (1, 'pc-web', '2024-09-11 06:39:32', 'pc-web', NULL, 'PC-WEB 管理系统', 'client_secret_basic', 'password', 'http://127.0.0.1:5001/oauth2/code,https://www.baidu.com', '', '[[[wp]]]', '{\"@class\":\"java.util.Collections$UnmodifiableMap\",\"settings.client.require-proof-key\":false,\"settings.client.require-authorization-consent\":true}', '{\"accessTokenTimeToLive\":120}', b'1', b'0', NULL, NULL, '2023-09-15 16:43:14', NULL, NULL, '2024-12-07 12:24:30');
@@ -350,12 +354,12 @@ CREATE TABLE `t_user` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `tenant_id` bigint DEFAULT NULL COMMENT '租户ID',
   `username` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '账号',
-  `password` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '' COMMENT '密码',
+  `password` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '密码',
   `nickname` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '昵称',
   `org_id` bigint DEFAULT NULL COMMENT '组织ID',
   `readonly` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否内置',
-  `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '邮箱',
-  `mobile` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '' COMMENT '手机',
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci DEFAULT NULL COMMENT '邮箱',
+  `mobile` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '手机',
   `sex` tinyint DEFAULT '1' COMMENT '性别',
   `type` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '0=平台管理员；1=租户管理员',
   `status` bit(1) DEFAULT b'0' COMMENT '状态 \n1启用 0禁用',
@@ -372,7 +376,9 @@ CREATE TABLE `t_user` (
   `last_modify_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '更新人名称',
   `last_modify_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `UN_ACCOUNT_TENANT` (`username`,`tenant_id`) USING BTREE COMMENT '账号唯一约束'
+  UNIQUE KEY `UN_ACCOUNT_TENANT` (`username`,`tenant_id`) USING BTREE COMMENT '账号唯一约束',
+  UNIQUE KEY `uk_user_tenant_email` (`tenant_id`,`email`,(IF(`deleted` = 0 AND `email` <> '', 1, NULL))),
+  UNIQUE KEY `uk_user_tenant_mobile` (`tenant_id`,`mobile`,(IF(`deleted` = 0 AND `mobile` <> '', 1, NULL)))
 ) ENGINE=InnoDB AUTO_INCREMENT=2011807735754166274 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='用户';
 
 INSERT INTO `t_user` (`id`, `tenant_id`, `username`, `password`, `nickname`, `org_id`, `readonly`, `email`, `mobile`, `sex`, `type`, `status`, `avatar`, `description`, `birthday`, `last_login_ip`, `last_login_time`, `deleted`, `create_by`, `create_name`, `create_time`, `last_modify_by`, `last_modify_name`, `last_modify_time`) VALUES (1, 1, 'admin', '{bcrypt}$2a$10$R2AdNVf402GnqcJejdjY..wOHP5hFt5x0vz5qXdTVG.udcdFmqu.K', '平台管理员', 100, b'0', NULL, NULL, 1, '0', b'1', NULL, NULL, NULL, NULL, NULL, b'0', 0, '系统管理员', '2020-10-16 03:25:36', 1, '平台管理员', '2026-01-15 14:26:06');

@@ -48,7 +48,7 @@ public class ErrorHandlerConfiguration {
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public ErrorWebExceptionHandler errorWebExceptionHandler(ErrorAttributes errorAttributes) {
         JsonExceptionHandler exceptionHandler = new JsonExceptionHandler(errorAttributes,
-                this.webProperties, null, this.applicationContext);
+                this.webProperties, this.webProperties.getError(), this.applicationContext);
         exceptionHandler.setViewResolvers(this.viewResolvers);
         exceptionHandler.setMessageWriters(this.serverCodecConfigurer.getWriters());
         exceptionHandler.setMessageReaders(this.serverCodecConfigurer.getReaders());

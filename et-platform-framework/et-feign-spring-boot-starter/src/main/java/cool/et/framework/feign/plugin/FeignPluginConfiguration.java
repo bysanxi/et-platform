@@ -12,18 +12,21 @@ import feign.optionals.OptionalDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.*;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.cloud.openfeign.loadbalancer.LoadBalancerFeignRequestTransformer;
 import org.springframework.cloud.openfeign.support.FeignHttpMessageConverters;
+import org.springframework.cloud.openfeign.support.HttpMessageConverterCustomizer;
 import org.springframework.cloud.openfeign.support.ResponseEntityDecoder;
 import org.springframework.cloud.openfeign.support.SpringDecoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -80,6 +83,14 @@ public class FeignPluginConfiguration {
     @LoadBalanced
     public RestTemplate lbRestTemplate() {
         return new RestTemplate();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public FeignHttpMessageConverters feignHttpMessageConverters(ObjectProvider<HttpMessageConverter<?>> converters,
+                                                                 ObjectProvider<HttpMessageConverterCustomizer> customizers) {
+        // The platform decoder lives in the parent context, outside the named Feign client contexts.
+        return new FeignHttpMessageConverters(converters, customizers);
     }
 
     @Bean

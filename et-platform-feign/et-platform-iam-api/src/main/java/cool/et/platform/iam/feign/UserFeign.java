@@ -1,10 +1,10 @@
 package cool.et.platform.iam.feign;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import cool.et.framework.commons.FeignConstants;
-import cool.et.framework.commons.remote.LoadService;
-import cool.et.platform.iam.feign.domain.req.UserFeignPageReq;
-import cool.et.platform.iam.feign.domain.resp.UserInfoResp;
+import cool.et.platform.iam.contract.user.UserApi;
+import cool.et.platform.iam.contract.user.UserInfoResp;
+import cool.et.platform.iam.contract.user.UserPage;
+import cool.et.platform.iam.contract.user.UserPageReq;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,34 +15,17 @@ import java.util.Map;
 import java.util.Set;
 
 @FeignClient(name = FeignConstants.AUTH_FEIGN_NAME, dismiss404 = true)
-public interface UserFeign extends LoadService<UserInfoResp> {
+public interface UserFeign extends UserApi {
 
-    /**
-     * 根据 ID 批量查询
-     *
-     * @param ids 唯一键（可能不是主键ID)
-     * @return 查询结果
-     */
     @Override
     @PostMapping("/users/batch_ids")
-    Map<Object, UserInfoResp> findByIds(@RequestBody Set<Object> ids);
+    Map<Long, UserInfoResp> findByIds(@RequestBody Set<Long> ids);
 
-    /**
-     * 分页查询
-     *
-     * @param req req
-     * @return 查询结果
-     */
+    @Override
     @PostMapping("/users/page")
-    Page<UserInfoResp> pageList(@RequestBody UserFeignPageReq req);
+    UserPage pageList(@RequestBody UserPageReq req);
 
-    /**
-     * 根据 ID 批量查询
-     *
-     * @param id 唯一键（可能不是主键ID)
-     * @return 查询结果
-     */
+    @Override
     @GetMapping("/users/{id}")
-    UserInfoResp findById(@PathVariable Long id);
-
+    UserInfoResp findById(@PathVariable("id") Long id);
 }

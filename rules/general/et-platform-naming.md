@@ -5,8 +5,8 @@
 ## Maven 模块
 
 - 模块目录名与 POM 的 `artifactId` 相同。名称以 `et-` 开头，使用小写英文和连字符，例如 `et-platform-gateway`。
-- 平台级模块采用 `et-platform-<职责>`，如 `et-platform-dependencies`、`et-platform-framework`、`et-platform-feign`、`et-platform-iam` 和 `et-platform-gateway`。业务服务的 Feign 契约采用 `et-platform-<服务>-api`，例如 `et-platform-feign/et-platform-iam-api`。
-- 自有 Maven 坐标以 `cool.et` 为根。根项目、依赖管理、IAM、Gateway 和 IAM API 使用 `cool.et`。框架父模块及其子模块使用 `cool.et.framework`，Feign 聚合 POM 使用 `cool.et.feign`。引用依赖时，以被引用模块自身声明或继承的 `groupId` 为准。
+- 平台级模块采用 `et-platform-<职责>`，如 `et-platform-dependencies`、`et-platform-framework`、`et-platform-feign`、`et-platform-iam` 和 `et-platform-gateway`。业务服务的 Feign 客户端模块采用 `et-platform-<服务>-api`，例如 `et-platform-feign/et-platform-iam-api`。IAM 服务端和客户端共享的 Java 业务接口及数据类型放在根目录的 `et-platform-iam-common`，按职责使用 `cool.et.platform.iam.contract.account`、`cool.et.platform.iam.contract.oauth` 等包。HTTP 路径、方法和参数绑定由 IAM Controller 和 Feign 客户端分别声明。
+- 自有 Maven 坐标以 `cool.et` 为根。根项目、依赖管理、IAM、Gateway、IAM 共享协议和 IAM API 使用 `cool.et`。框架父模块及其子模块使用 `cool.et.framework`，Feign 聚合 POM 使用 `cool.et.feign`。引用依赖时，以被引用模块自身声明或继承的 `groupId` 为准。
 
 ## 框架子模块
 
@@ -17,7 +17,7 @@
 - `et-mybatis-plus-spring-boot-starter` 提供持久层、多租户隔离和数据权限。
 - `et-redis-spring-boot-starter` 提供 Redis 缓存、分布式锁和限流。
 - `et-security-spring-boot-starter` 提供认证和鉴权集成。
-- `et-feign-spring-boot-starter` 提供 Feign 调用增强。IAM 的业务接口与传输对象放在 `et-platform-iam-api`。
+- `et-feign-spring-boot-starter` 提供 Feign 调用增强。IAM 专用的 Feign 客户端和请求拦截器配置放在 `et-platform-iam-api`。
 
 ## Java 包
 

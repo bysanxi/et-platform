@@ -19,13 +19,13 @@ import cool.et.framework.security.domain.UserInfoDetails;
 import cool.et.framework.security.utils.PasswordEncoderHelper;
 import cool.et.platform.iam.auth.support.domain.UserTenantAuthentication;
 import cool.et.platform.iam.base.domain.dto.req.ChangeUserInfoReq;
-import cool.et.platform.iam.system.domain.dto.req.UserPageReq;
+import cool.et.platform.iam.contract.user.UserPageReq;
 import cool.et.platform.iam.system.domain.dto.req.UserSaveReq;
 import cool.et.platform.iam.system.domain.dto.req.UserUpdateReq;
-import cool.et.platform.iam.system.domain.dto.resp.UserPageResp;
 import cool.et.platform.iam.system.domain.entity.Role;
 import cool.et.platform.iam.system.domain.entity.User;
 import cool.et.platform.iam.system.domain.entity.UserRole;
+import cool.et.platform.iam.system.domain.enums.Sex;
 import cool.et.platform.iam.system.repository.ResourceMapper;
 import cool.et.platform.iam.system.repository.RoleMapper;
 import cool.et.platform.iam.system.repository.UserMapper;
@@ -86,13 +86,13 @@ public class UserServiceImpl extends SuperServiceImpl<UserMapper, User> implemen
     }
 
     @Override
-    public IPage<UserPageResp> pageList(UserPageReq req) {
+    public IPage<User> pageList(UserPageReq req) {
         var query = visibleUserQuery()
                 .eq(User::getStatus, req.getStatus())
                 .like(User::getUsername, req.getUsername()).like(User::getNickname, req.getNickname()).like(User::getEmail, req.getEmail())
-                .eq(User::getSex, req.getSex()).in(User::getOrgId, orgService.getFullTreeIdPath(req.getOrgId()))
+                .eq(User::getSex, Sex.of(req.getSex())).in(User::getOrgId, orgService.getFullTreeIdPath(req.getOrgId()))
                 .eq(User::getMobile, req.getMobile());
-        return baseMapper.selectPage(req.buildPage(), query).convert(x -> BeanUtil.toBean(x, UserPageResp.class));
+        return baseMapper.selectUserPage(req, query);
     }
 
     @Override
@@ -152,7 +152,14 @@ public class UserServiceImpl extends SuperServiceImpl<UserMapper, User> implemen
     @DSTransactional(rollbackFor = Exception.class)
     public void changeInfo(ChangeUserInfoReq req) {
         final Long userId = context.userId();
-        User bean = User.builder().id(userId).email(req.getEmail()).mobile(req.getMobile())
+        if (req.getEmail() != null || req.getMobile() != null) {
+            User current = getById(userId);
+            if (current == null || (req.getEmail() != null && !req.getEmail().equalsIgnoreCase(current.getEmail()))
+                    || (req.getMobile() != null && !req.getMobile().equals(current.getMobile()))) {
+                throw CheckedException.badRequest("联系方式须经验证后变更");
+            }
+        }
+        User bean = User.builder().id(userId)
                 .nickname(req.getNickname()).birthday(req.getBirthday())
                 .description(req.getDescription()).build();
         this.baseMapper.updateById(bean);

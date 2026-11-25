@@ -1,5 +1,6 @@
 package cool.et.platform.iam.base.domain.dto.req;
 
+import cool.et.platform.iam.contract.account.PasswordPolicy;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -22,7 +23,7 @@ public class ChangePasswordReq {
     @NotBlank(message = "新密码不能为空")
     @Length(max = 64, message = "新密码长度不能超过 {max}")
     @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+            regexp = PasswordPolicy.PATTERN,
             message = "密码不符合复杂性要求，必须包含至少8个字符，其中包括一个大写字母、一个小写字母、一个数字和一个特殊字符。")
     private String newPassword;
     

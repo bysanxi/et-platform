@@ -14,7 +14,7 @@ import cool.et.framework.security.configuration.SecurityExtProperties;
 import cool.et.framework.security.domain.UserInfoDetails;
 import cool.et.platform.iam.auth.domain.entity.LoginLog;
 import cool.et.platform.iam.auth.repository.LoginLogMapper;
-import cool.et.platform.iam.auth.service.PasswordLoginService;
+import cool.et.platform.iam.auth.service.UserSessionService;
 import cool.et.platform.iam.auth.support.domain.UserTenantAuthentication;
 import cool.et.platform.iam.system.domain.entity.User;
 import cool.et.platform.iam.system.service.UserService;
@@ -49,12 +49,13 @@ public class WpTokenListener implements SaTokenListener {
         String ua = request.getHeader(USER_AGENT);
         var userAgent = NativeUserAgent.parse(ua);
         final long userId = (long) loginId;
-        UserTenantAuthentication authentication = SaHolder.getStorage().getModel(PasswordLoginService.AUTHENTICATION, UserTenantAuthentication.class);
+        UserTenantAuthentication authentication = SaHolder.getStorage().getModel(UserSessionService.AUTHENTICATION, UserTenantAuthentication.class);
         UserInfoDetails info = this.userService.userinfo(authentication);
         LoginLog loginLog = LoginLog.builder().principal(info.getUsername()).clientId(loginParameter.getDeviceType())
                 .tenantId(info.getTenantId()).tenantCode(info.getTenantCode()).location(region).ip(ip)
                 .platform(userAgent.platform()).engine(userAgent.engine()).browser(userAgent.browser()).os(userAgent.os())
-                .loginType(PasswordLoginService.LOGIN_TYPE).createBy(userId).createTime(Instant.now()).createName(info.getNickname()).build();
+                .loginType(SaHolder.getStorage().getString(UserSessionService.LOGIN_METHOD)).createBy(userId)
+                .createTime(Instant.now()).createName(info.getNickname()).build();
         info.setLoginLog(JacksonUtils.readValue(JacksonUtils.toJson(loginLog), new TypeReference<>() {
         }));
         StpUtil.getTokenSessionByToken(tokenValue).set(extProperties.getServer().getTokenInfoKey(), info);

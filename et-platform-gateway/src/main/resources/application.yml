@@ -15,6 +15,7 @@ spring:
       - optional:nacos:cloud-default.yaml
       - optional:classpath:gateway-swagger.yaml
       - optional:classpath:gateway-route.yaml
+      - optional:nacos:gateway-route.yaml
   cloud:
     nacos:
       server-addr: ${NACOS_ADDR:127.0.0.1:8848}

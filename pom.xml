@@ -9,6 +9,7 @@
     <modules>
         <module>et-platform-dependencies</module>
         <module>et-platform-framework</module>
+        <module>et-platform-iam-common</module>
         <module>et-platform-feign</module>
         <module>et-platform-iam</module>
         <module>et-platform-gateway</module>

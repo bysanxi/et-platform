@@ -68,6 +68,11 @@
                 <artifactId>sa-token-jackson</artifactId>
                 <version>${sa-token.version}</version>
             </dependency>
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-oauth2</artifactId>
+                <version>${sa-token.version}</version>
+            </dependency>
             <!-- Sa-Token 整合 RedisTemplate -->
             <dependency>
                 <groupId>cn.dev33</groupId>
@@ -159,10 +164,30 @@
             </dependency>
             <dependency>
                 <groupId>cool.et</groupId>
+                <artifactId>et-platform-iam-common</artifactId>
+                <version>${et-platform.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cool.et</groupId>
                 <artifactId>et-platform-iam-api</artifactId>
                 <version>${et-platform.version}</version>
             </dependency>
             <!-- 自定义SDK -->
+            <dependency>
+                <groupId>cool.et.framework</groupId>
+                <artifactId>et-domain-foundation</artifactId>
+                <version>${et-platform.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cool.et.framework</groupId>
+                <artifactId>et-leadership-spring-boot-starter</artifactId>
+                <version>${et-platform.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cool.et.framework</groupId>
+                <artifactId>et-id-spring-boot-starter</artifactId>
+                <version>${et-platform.version}</version>
+            </dependency>
             <dependency>
                 <groupId>cool.et.framework</groupId>
                 <artifactId>et-redis-spring-boot-starter</artifactId>
@@ -308,6 +333,7 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
+                    <proc>full</proc>
                     <parameters>true</parameters>
                 </configuration>
             </plugin>

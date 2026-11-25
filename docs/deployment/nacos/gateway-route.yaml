@@ -1,0 +1,161 @@
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: et-platform-iam
+              uri: lb://et-platform-iam
+              predicates:
+                - Path=/iam/**
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 100   # 允许用户每秒处理多少个请求
+                    redis-rate-limiter.burstCapacity: 100   # 令牌桶的容量，允许在一秒钟内完成的最大请求数
+                    # 使用 IP 限流策略（使用 SpEL 按名称引用 bean）
+                    key-resolver: "#{@ipKeyResolver}"
+                - StripPrefix=1
+                - PreserveHostHeader
+                - name: Retry
+                  args:
+                    retries: 1
+                    statuses: BAD_GATEWAY
+                    backoff:
+                      firstBackoff: 200ms
+                      maxBackoff: 500ms
+                      factor: 1
+                      basedOnPreviousValue: false
+                      exceptions: TimeoutException
+            - id: et-stock-assistant
+              uri: lb://et-stock-assistant
+              predicates:
+                - Path=/et/assistant/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader
+              metadata:
+                response-timeout: -1
+            - id: et-stock-meta-service
+              uri: lb://et-stock-meta-service
+              predicates:
+                - Path=/et/meta/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader
+
+            - id: et-stock-data-service
+              uri: lb://et-stock-data-service
+              predicates:
+                - Path=/et/data/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader
+
+            - id: et-stock-data-support-service
+              uri: lb://et-stock-data-support-service
+              predicates:
+                - Path=/et/data-support/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader
+
+            - id: et-stock-analysis-service
+              uri: lb://et-stock-analysis-service
+              predicates:
+                - Path=/et/analysis/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader
+
+            - id: et-stock-usage-service
+              uri: lb://et-stock-usage-service
+              predicates:
+                - Path=/et/usage/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader
+
+            - id: et-stock-issue-service
+              uri: lb://et-stock-issue-service
+              predicates:
+                - Path=/et/issue/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader
+
+            - id: et-stock-note-service
+              uri: lb://et-stock-note-service
+              predicates:
+                - Path=/et/notes/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader
+
+            - id: et-stock-billing-service
+              uri: lb://et-stock-billing-service
+              predicates:
+                - Path=/et/billing/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader
+
+            - id: et-stock-system-service
+              uri: lb://et-stock-system-service
+              predicates:
+                - Path=/et/system/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader
+
+            - id: et-stock-knowledge-service
+              uri: lb://et-stock-knowledge-service
+              predicates:
+                - Path=/et/knowledge/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader
+
+            - id: et-stock-lynxe-adapter
+              uri: lb://et-stock-lynxe-adapter
+              predicates:
+                - Path=/et/lynxe/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader
+
+            - id: et-stock-channel-web-bff
+              uri: lb://et-stock-channel-web-bff
+              predicates:
+                - Path=/et/channel/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader
+            - id: et-stock-channel-adapter-wechat
+              uri: lb://et-stock-channel-adapter-wechat
+              predicates:
+                - Path=/et/channel-wechat/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader
+            - id: et-stock-doc-convert-service
+              uri: lb://et-stock-doc-convert-service
+              predicates:
+                - Path=/et/doc-convert/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader
+            - id: et-stock-position-management-agent
+              uri: lb://et-stock-position-management-agent
+              predicates:
+                - Path=/et/position-management/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader
+            - id: et-stock-automation-agent-service
+              uri: lb://et-stock-automation-agent-service
+              predicates:
+                - Path=/et/automation/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader
