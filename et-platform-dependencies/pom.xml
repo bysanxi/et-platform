@@ -7,7 +7,7 @@
     <version>4.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>et-platform-dependencies</name>
-    <description>wemirr 平台包版本管理</description>
+    <description>et-platform 平台包版本管理</description>
 
     <properties>
         <!-- 打包跳过单元测试 -->

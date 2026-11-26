@@ -10,12 +10,12 @@
 
 ## 项目概览
 
-ET Platform 前端迁自 Wemirr Platform UI，使用  Vue 3、Vite、TypeScript、Vben Admin 5、Ant Design Vue、Pinia、Vue Router、Vue I18n、FastCrud、Turbo 和 pnpm workspace 的前端 monorepo。
+ET Platform 前端使用 Vue 3、Vite、TypeScript、Vben Admin 5、Ant Design Vue、Pinia、Vue Router、Vue I18n、FastCrud、Turbo 和 pnpm workspace 的前端 monorepo。
 
 核心目录：
 
-- `apps/web-antd`：当前主要应用，WEMIRR 业务页面、API、路由、i18n、Vite 配置都在这里。
-- `apps/web-antd/src/views/wemirr`：业务页面，包含 platform、system、workflow、WMS、TMS、AI/RAG、develop 等模块。
+- `apps/web-antd`：当前主要应用，ET 业务页面、API、路由、i18n、Vite 配置都在这里。
+- `apps/web-antd/src/views/et`：业务页面，包含 platform、system、workflow、WMS、TMS、AI/RAG、develop 等模块。
 - `apps/web-antd/src/api`：全局 API、请求客户端、认证接口和公共 helper。
 - `apps/web-antd/src/router`：路由、动态菜单、权限守卫。
 - `apps/web-antd/src/plugin/fast-crud`：FastCrud 全局配置、权限按钮和表格公共行为。
@@ -42,7 +42,7 @@ ET Platform 前端迁自 Wemirr Platform UI，使用  Vue 3、Vite、TypeScript�
 
 ## 品牌与版权保护
 
-- 不要移除、替换或弱化 `Wemirr`、`WEMIRR-PLATFORM`、`battcn`、`Vben`、模块名、包名、README 作者/文档/演示/交流群链接，除非用户明确要求。
+- 不要移除、替换或弱化 `ET Platform`、`battcn`、`Vben`、模块名、包名、README 作者/文档/演示/交流群链接，除非用户明确要求。
 - 保留 MIT license、Vben upstream 信息和现有作者信息。不要把项目对外标识改成通用模板名。
 - README、路由标题、菜单文案和业务页面当前以中文为主。不要批量改成英文。
 
@@ -137,7 +137,7 @@ git diff --no-index --check /dev/null CLAUDE.md
 
 ## FastCrud 与业务页面
 
-- WEMIRR 业务列表页大量使用 FastCrud。新增或修改 CRUD 页面前，先读同模块相似的 `index.vue`、`crud.ts`/`crud.tsx`、`api.ts`。
+- ET 业务列表页大量使用 FastCrud。新增或修改 CRUD 页面前，先读同模块相似的 `index.vue`、`crud.ts`/`crud.tsx`、`api.ts`。
 - `pageRequest`、`addRequest`、`editRequest`、`delRequest` 的参数形状要与后端接口一致，不要为了页面方便改坏契约。
 - 表格列宽、固定列、搜索项、表单校验、字典、弹窗/抽屉布局要遵循已有页面密度和交互习惯。
 - 字典优先复用 FastCrud `dict`、现有 `useDict`、table-select helper 或后端字典接口，不要散落重复静态枚举。
@@ -147,7 +147,7 @@ git diff --no-index --check /dev/null CLAUDE.md
 ## 国际化与文案
 
 - 全局路由、布局和通用文案优先使用 `$t` 与 `apps/web-antd/src/locales`。
-- 当前 WEMIRR 业务 CRUD 配置大量使用中文标题和校验提示。修改时保持同模块一致；不要在一次任务里强行全量 i18n 化。
+- 当前 ET 业务 CRUD 配置大量使用中文标题和校验提示。修改时保持同模块一致；不要在一次任务里强行全量 i18n 化。
 - 如果新增通用菜单、布局或核心页面文案，应同步 `zh-CN` 和 `en-US`，并检查 key 命名是否与现有结构一致。
 - 不要把后端返回的业务错误翻译成另一套前端硬编码文案，除非产品明确要求。
 
@@ -166,8 +166,8 @@ git diff --no-index --check /dev/null CLAUDE.md
 
 - 认证/权限/菜单：`apps/web-antd/src/api/core/auth.ts`、`apps/web-antd/src/router/access.ts`、`apps/web-antd/src/router/guard.ts`、`apps/web-antd/src/preferences.ts`。
 - FastCrud 页面：目标目录下 `index.vue`、`crud.ts`/`crud.tsx`、`api.ts`，以及同业务模块相似页面。
-- 系统/平台：`apps/web-antd/src/views/wemirr/system`、`apps/web-antd/src/views/wemirr/platform`，关注租户、组织、成员、角色和菜单权限。
-- Develop：`apps/web-antd/src/views/wemirr/develop`，关注网关路由、限流和限访规则。
+- 系统/平台：`apps/web-antd/src/views/et/system`、`apps/web-antd/src/views/et/platform`，关注租户、组织、成员、角色和菜单权限。
+- Develop：`apps/web-antd/src/views/et/develop`，关注网关路由、限流和限访规则。
 
 ## 验证规则
 

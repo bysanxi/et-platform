@@ -1,6 +1,6 @@
 # 项目概览
 
-ET 内部团队使用的 Java 21 多租户后端，基于 Wemirr Platform 的 `v4-dev` 分支（`0618bbd5`），沿用 Apache License 2.0。项目模块和服务注册名使用 ET 前缀，Java 包和 Maven 组织标识统一以 `cool.et` 开头。
+ET 内部团队使用的 Java 21 多租户后端，采用 Apache License 2.0，项目来源见 [README](../../README.zh-CN.md#项目来源与精简背景)。项目模块和服务注册名使用 ET 前缀，Java 包和 Maven 组织标识统一以 `cool.et` 开头。
 
 ## 代码与数据边界
 

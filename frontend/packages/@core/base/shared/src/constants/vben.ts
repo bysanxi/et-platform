@@ -1,7 +1,7 @@
 /**
  * @zh_CN GITHUB 仓库地址
  */
-export const VBEN_GITHUB_URL = 'https://gitee.com/battcn/wemirr-platform';
+export const VBEN_GITHUB_URL = 'https://github.com/bysanxi/et-platform';
 
 /**
  * @zh_CN 文档地址
@@ -14,7 +14,7 @@ export const VBEN_DOC_URL = 'https://docs.battcn.com';
 export const VBEN_LOGO_URL = 'https://docs.battcn.com/favicon.ico';
 
 /**
- * @zh_CN WEMIRR-PLATFORM 首页地址
+ * @zh_CN 上游演示地址
  */
 export const VBEN_PREVIEW_URL = 'https://cloud.battcn.com';
 

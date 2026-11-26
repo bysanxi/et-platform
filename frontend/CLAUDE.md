@@ -31,12 +31,12 @@ Claude Code 应与 `AGENTS.md` 一起使用本文件。`AGENTS.md` 是本仓库 
 
 ## 项目上下文
 
-ET Platform 前端迁自 Wemirr Platform UI，使用  Vue 3 + Vite + TypeScript + Vben Admin 5 + Ant Design Vue + Pinia + Vue Router + Vue I18n + FastCrud + Turbo + pnpm workspace 的前端 monorepo。
+ET Platform 前端使用 Vue 3 + Vite + TypeScript + Vben Admin 5 + Ant Design Vue + Pinia + Vue Router + Vue I18n + FastCrud + Turbo + pnpm workspace 的前端 monorepo。
 
 重要目录：
 
 - `apps/web-antd`：主应用。
-- `apps/web-antd/src/views/wemirr`：业务页面，保留租户、组织、用户、角色、菜单、审计与网关规则。
+- `apps/web-antd/src/views/et`：业务页面，保留租户、组织、用户、角色、菜单、审计与网关规则。
 - `apps/web-antd/src/api`：请求客户端、认证接口和公共 API。
 - `apps/web-antd/src/router`：路由、动态菜单、权限守卫。
 - `apps/web-antd/src/plugin/fast-crud`：FastCrud 全局配置、按钮权限和表格公共行为。
@@ -51,12 +51,12 @@ ET Platform 前端迁自 Wemirr Platform UI，使用  Vue 3 + Vite + TypeScript 
 - FastCrud 页面先读同目录 `index.vue`、`crud.ts`/`crud.tsx`、`api.ts`，再修改。
 - 按钮权限优先使用 `setup-fast-crud-permission.ts` 的 `permission.prefix` / `prefix:action` 模式。
 - API 字段、枚举值、状态码、分页参数、权限码属于前后端契约。修改前查后端或相似页面。
-- 当前 WEMIRR 业务 CRUD 文案以中文为主；通用路由/布局文案优先使用 `$t` 和 `apps/web-antd/src/locales`。
+- 当前 ET 业务 CRUD 文案以中文为主；通用路由/布局文案优先使用 `$t` 和 `apps/web-antd/src/locales`。
 - 不要记录或展示密码、token、clientSecret、私钥或完整认证响应。
 
 品牌与版权保护：
 
-- 不要移除或替换 `Wemirr`、`WEMIRR-PLATFORM`、`battcn`、`Vben`、README 作者/文档/演示/交流群链接。
+- 不要移除或替换 `ET Platform`、`battcn`、`Vben`、README 作者/文档/演示/交流群链接。
 - 保留 MIT license、Vben upstream 信息和现有作者信息。
 
 ## 常用命令

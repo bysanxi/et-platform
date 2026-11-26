@@ -34,4 +34,6 @@ ET Platform 是供 ET 内部团队复用的多租户 Java 后端底座，配套�
 
 ET Platform 后端基于 Wemirr Platform 的 `v4-dev` 分支提交 `0618bbd5` 迁移并定制，沿用 Apache License 2.0。配套前端迁自 Wemirr Platform UI，沿用 MIT 许可证。感谢上游作者及贡献者。[Wemirr Platform](https://github.com/battcn/wemirr-platform) · [基线提交](https://github.com/battcn/wemirr-platform/commit/0618bbd51e65bafb293282af497ab9e4a1c64564) · [后端许可证](LICENSE) · [前端来源与许可](frontend/README.md#来源与许可)
 
+上游版权署名为 `Copyright [2023] [WEMIRR-PLATFORM]`。
+
 ET 内部应用需要共享登录和权限能力，同时隔离各团队的数据。基于这一需求，项目保留 IAM、网关和常用框架组件，移除了 Suite、工作流、监控、AI、仓储管理（WMS）、运输管理（TMS）和套餐订阅功能，减少底座需要部署和维护的模块，让各业务项目按需扩展。

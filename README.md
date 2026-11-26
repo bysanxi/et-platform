@@ -36,4 +36,6 @@ The following guides are in Chinese.
 
 The ET Platform backend was adapted from commit `0618bbd5` on the Wemirr Platform `v4-dev` branch and retains the Apache License 2.0. Thanks to the upstream authors and contributors. The frontend derives from Wemirr Platform UI and retains its MIT license. [Wemirr Platform](https://github.com/battcn/wemirr-platform) · [Baseline commit](https://github.com/battcn/wemirr-platform/commit/0618bbd51e65bafb293282af497ab9e4a1c64564) · [Backend license](LICENSE) · [Frontend source and license](frontend/README.md#来源与许可)
 
+Upstream copyright notice: `Copyright [2023] [WEMIRR-PLATFORM]`.
+
 Internal ET applications share sign-in and authorization while keeping each team's data isolated. The project keeps IAM, the gateway, and shared framework components. It removes Suite, workflow, monitoring, AI, warehouse management (WMS), transportation management (TMS), and subscription plan features to reduce how much the team has to deploy and maintain. Each business application can add the capabilities it needs.

@@ -1,7 +1,7 @@
 name: et-platform
 
 networks:
-  wemirr:
+  et:
     driver: bridge
 
 services:
@@ -32,7 +32,7 @@ services:
       - ../mysql/et-platform.sql:/docker-entrypoint-initdb.d/01-et-platform.sql:ro
       - mysql_conf:/etc/mysql/conf.d
     networks:
-      - wemirr
+      - et
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${ET_DB_PASSWORD:-123456}"]
       interval: 10s
@@ -51,7 +51,7 @@ services:
     volumes:
       - redis_data:/data
     networks:
-      - wemirr
+      - et
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -81,7 +81,7 @@ services:
       - nacos_data:/home/nacos/data
       - nacos_logs:/home/nacos/logs
     networks:
-      - wemirr
+      - et
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8848/nacos/actuator/health"]
       interval: 30s
