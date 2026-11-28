@@ -6,7 +6,7 @@
 
 使用 `/et/**` 业务路径的部署，在网关的 `NACOS_NAMESPACE`（默认 `et-platform`）中发布 `DEFAULT_GROUP/gateway-route.yaml`。首次部署可从 [Nacos 配置包](nacos/et-platform.zip) 导入。升级时以[路由配置](nacos/gateway-route.yaml)为参考，合入环境已有的自定义规则。远程 `spring.cloud.gateway.server.webflux.routes` 会整体替换包内路由列表，请保留新版 `/iam/**` 规则及该环境使用的业务路由。
 
-升级网关后，确认服务发现的命名空间中存在对应的健康实例。例如 `/et/analysis/web/analysis/task/page` 去掉前两段后转发到 `et-stock-analysis-service` 的 `/web/analysis/task/page`。没有远程路由配置时，网关使用包内的 IAM 路由。
+升级网关后，按路由的 `lb://` 目标在服务发现的命名空间中确认实例健康，并核对转发路径。例如，配置 `Path=/iam/**` 和 `StripPrefix=1` 时，网关去掉 `/iam` 前缀，将剩余路径转发到 `et-platform-iam`。没有远程路由配置时，网关使用包内的 IAM 路由。
 
 依赖 IAM Feign 或框架组件的项目也需更新 Maven 坐标和 Java 导入，并重新编译。
 

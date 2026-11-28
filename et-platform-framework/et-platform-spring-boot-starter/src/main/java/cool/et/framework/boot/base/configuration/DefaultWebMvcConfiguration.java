@@ -5,16 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.PackageVersion;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import cool.et.framework.boot.base.HttpInterceptor;
 import cool.et.framework.boot.base.converter.*;
+import cool.et.framework.commons.JacksonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +23,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -62,7 +54,7 @@ public class DefaultWebMvcConfiguration implements WebMvcConfigurer {
     /**
      * 提供全局 ObjectMapper Bean
      * Spring Boot 4 模块化了 Jackson 自动配置，手动提供并配置 ObjectMapper
-     * 配置与 JacksonUtils.createDefaultObjectMapper() 保持一致
+     * 本地日期时间沿用平台格式，Instant 使用标准 ISO-8601。
      */
     @Bean
     @Primary
@@ -84,15 +76,12 @@ public class DefaultWebMvcConfiguration implements WebMvcConfigurer {
         longModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
         longModule.addSerializer(long.class, ToStringSerializer.instance);
         objectMapper.registerModule(longModule);
-        // 时间模块
-        objectMapper.registerModule(new LocalJavaTimeModule());
-        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.registerModule(JacksonUtils.createJavaTimeModule());
         return objectMapper;
     }
 
     /**
-     * 解决 @RequestParam(value = "date") Date date
-     * date 类型参数 格式问题
+     * 将请求参数中的日期文本转换为 Date。
      */
     @Bean
     public Converter<String, Date> dateConvert() {
@@ -100,7 +89,7 @@ public class DefaultWebMvcConfiguration implements WebMvcConfigurer {
     }
 
     /**
-     * 解决 @RequestParam(value = "time") LocalDate time
+     * 将请求参数中的日期文本转换为 LocalDate。
      */
     @Bean
     public Converter<String, LocalDate> localDateConverter() {
@@ -108,7 +97,7 @@ public class DefaultWebMvcConfiguration implements WebMvcConfigurer {
     }
 
     /**
-     * 解决 @RequestParam(value = "time") LocalTime time
+     * 将请求参数中的时间文本转换为 LocalTime。
      */
     @Bean
     public Converter<String, LocalTime> localTimeConverter() {
@@ -116,33 +105,11 @@ public class DefaultWebMvcConfiguration implements WebMvcConfigurer {
     }
 
     /**
-     * 解决 @RequestParam(value = "time") LocalDateTime time
+     * 将请求参数中的日期时间文本转换为 LocalDateTime。
      */
     @Bean
     public Converter<String, LocalDateTime> localDateTimeConverter() {
         return new String2LocalDateTimeConverter();
     }
 
-    static class LocalJavaTimeModule extends SimpleModule {
-
-        private static final String NORM_DATE_PATTERN = "yyyy-MM-dd";
-        private static final String NORM_TIME_PATTERN = "HH:mm:ss";
-        private static final String NORM_DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
-
-        LocalJavaTimeModule() {
-            super(PackageVersion.VERSION);
-            this.addSerializer(LocalDateTime.class,
-                    new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(NORM_DATETIME_PATTERN)));
-            this.addSerializer(LocalDate.class,
-                    new LocalDateSerializer(DateTimeFormatter.ofPattern(NORM_DATE_PATTERN)));
-            this.addSerializer(LocalTime.class,
-                    new LocalTimeSerializer(DateTimeFormatter.ofPattern(NORM_TIME_PATTERN)));
-            this.addDeserializer(LocalDateTime.class,
-                    new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(NORM_DATETIME_PATTERN)));
-            this.addDeserializer(LocalDate.class,
-                    new LocalDateDeserializer(DateTimeFormatter.ofPattern(NORM_DATE_PATTERN)));
-            this.addDeserializer(LocalTime.class,
-                    new LocalTimeDeserializer(DateTimeFormatter.ofPattern(NORM_TIME_PATTERN)));
-        }
-    }
 }

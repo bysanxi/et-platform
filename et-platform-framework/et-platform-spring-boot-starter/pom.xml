@@ -13,6 +13,12 @@
     <description>通用 Spring Boot Starter，聚合所有基础模块，提供 Web、监控、缓存等核心功能</description>
 
     <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>

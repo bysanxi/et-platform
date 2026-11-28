@@ -30,6 +30,10 @@ import java.time.format.DateTimeParseException;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static cool.et.framework.commons.times.TimeConstants.DEFAULT_DATE_FORMAT;
+import static cool.et.framework.commons.times.TimeConstants.DEFAULT_DATE_TIME_FORMAT;
+import static cool.et.framework.commons.times.TimeConstants.DEFAULT_TIME_FORMAT;
+
 /**
  * Jackson JSON工具类
  * <p>提供统一的JSON序列化/反序列化方法，支持Java8时间API</p>
@@ -40,10 +44,6 @@ import java.util.TimeZone;
  * @since 1.0.0
  */
 public final class JacksonUtils {
-
-    private static final String NORM_DATE_PATTERN = "yyyy-MM-dd";
-    private static final String NORM_TIME_PATTERN = "HH:mm:ss";
-    private static final String NORM_DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
 
     private JacksonUtils() {
@@ -56,6 +56,22 @@ public final class JacksonUtils {
 
     public static ObjectMapper getObjectMapper() {
         return createDefaultObjectMapper();
+    }
+
+    /** 创建带平台本地日期时间格式的标准模块，调用方可在注册前定制其他类型。 */
+    public static JavaTimeModule createJavaTimeModule() {
+        JavaTimeModule module = new JavaTimeModule();
+        DateTimeFormatter date = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
+        DateTimeFormatter time = DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT);
+        DateTimeFormatter dateTime = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT);
+
+        module.addSerializer(LocalDate.class, new LocalDateSerializer(date));
+        module.addDeserializer(LocalDate.class, new LocalDateDeserializer(date));
+        module.addSerializer(LocalTime.class, new LocalTimeSerializer(time));
+        module.addDeserializer(LocalTime.class, new LocalTimeDeserializer(time));
+        module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTime));
+        module.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTime));
+        return module;
     }
 
     static {
@@ -73,23 +89,18 @@ public final class JacksonUtils {
         // 序列化时，如果是空对象，不抛出异常
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         // 时间处理
-        mapper.setDateFormat(new SimpleDateFormat(NORM_DATETIME_PATTERN));
+        mapper.setDateFormat(new SimpleDateFormat(DEFAULT_DATE_TIME_FORMAT));
         mapper.setLocale(Locale.CHINA);
         mapper.setTimeZone(TimeZone.getTimeZone(ZoneId.systemDefault()));
-        JavaTimeModule javaTimeModule = new JavaTimeModule();
-        javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(DateTimeFormatter.ofPattern(NORM_TIME_PATTERN)));
-        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern(NORM_DATE_PATTERN)));
-        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(NORM_DATETIME_PATTERN)));
+        JavaTimeModule javaTimeModule = createJavaTimeModule();
+        // 工具 Mapper 沿用本地秒级 Instant 文本，并支持读回 ISO-8601。
         javaTimeModule.addSerializer(Instant.class, new GlobalInstantSerializer());
-        javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(DateTimeFormatter.ofPattern(NORM_TIME_PATTERN)));
-        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern(NORM_DATE_PATTERN)));
-        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(NORM_DATETIME_PATTERN)));
         javaTimeModule.addDeserializer(Instant.class, new CustomInstantDeserializer());
         SimpleModule longToStringModule = new SimpleModule();
         longToStringModule.addSerializer(Long.class, ToStringSerializer.instance);
         longToStringModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
         longToStringModule.addSerializer(long.class, ToStringSerializer.instance);
-        // 确保时间戳（timestamps）序列化为ISO-8601格式的字符串，而不是数字
+        // 以字符串写出日期时间。
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         mapper.registerModule(longToStringModule);
         mapper.registerModule(javaTimeModule);
@@ -98,7 +109,7 @@ public final class JacksonUtils {
 
     private static class GlobalInstantSerializer extends InstantSerializer {
         public GlobalInstantSerializer() {
-            super(InstantSerializer.INSTANCE, false, false, DateTimeFormatter.ofPattern(NORM_DATETIME_PATTERN));
+            super(InstantSerializer.INSTANCE, false, false, DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT));
         }
     }
 
@@ -109,7 +120,7 @@ public final class JacksonUtils {
      */
     private static class CustomInstantDeserializer extends JsonDeserializer<Instant> {
         // 创建一个不带时区信息的formatter
-        private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(NORM_DATETIME_PATTERN);
+        private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT);
 
         @Override
         public Instant deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
@@ -125,14 +136,14 @@ public final class JacksonUtils {
                 //    (重要：请确保服务的部署时区是你期望的)
                 return localDateTime.atZone(ZoneId.systemDefault()).toInstant();
             } catch (DateTimeParseException e) {
-                // 3. 如果自定义格式失败，尝试使用 Jackson 的默认 Instant 解析逻辑（支持ISO-8601和时间戳）
+                // 继续尝试 ISO-8601 时间文本。
                 try {
                     return Instant.parse(dateString);
                 } catch (DateTimeParseException ex) {
                     // 两个都失败了，才抛出异常
                     throw new IOException(String.format(
                             "Failed to deserialize Instant from string \"%s\". Tried formats: [%s, ISO-8601].",
-                            dateString, NORM_DATETIME_PATTERN
+                            dateString, DEFAULT_DATE_TIME_FORMAT
                     ), ex);
                 }
             }
